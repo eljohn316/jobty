@@ -1,5 +1,8 @@
 import typer
 
+from forms import add_job_form
+from services import add_job_application
+
 app = typer.Typer(no_args_is_help=True)
 
 
@@ -16,7 +19,9 @@ def add():
     """
     Add a new job application entry
     """
-    print("Add a new job application entry")
+
+    payload = add_job_form()
+    add_job_application(payload)
 
 
 @app.command()
