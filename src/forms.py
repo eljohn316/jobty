@@ -3,9 +3,11 @@ from typing import Any
 import typer
 import questionary
 import rich
+from rich.padding import Padding
 from pydantic import ValidationError
 
 from schemas import Job
+from constants import Colors
 
 ARRANGEMENT = ["Onsite", "Remote", "Hybrid"]
 
@@ -14,7 +16,12 @@ def text_field(message: str, default="", validate: Any = None):
     return questionary.text(
         message,
         default=default,
-        style=questionary.Style([("answer", "fg:#0ea5e9")]),
+        style=questionary.Style(
+            [
+                ("question", "nobold"),
+                ("answer", f"nobold fg:{Colors.sky_blue.value}"),
+            ]
+        ),
         validate=validate,
     )
 
@@ -24,12 +31,20 @@ def select_field(message: str, choices: list[str], default: str | None = None):
         message,
         choices=choices,
         default=default,
-        style=questionary.Style([("answer", "fg:#0ea5e9"), ("selected", "fg:#0ea5e9")]),
+        style=questionary.Style(
+            [
+                ("question", "nobold"),
+                ("answer", f"nobold fg:{Colors.sky_blue.value}"),
+                ("highlighted", f"fg:{Colors.sky_blue.value}"),
+                ("selected", f"fg:{Colors.sky_blue.value}"),
+            ]
+        ),
     )
 
 
 def add_job_form():
     try:
+        rich.print(f"[bold {Colors.emerald.value}] Fill in the fields below")
         answers = questionary.form(
             role=text_field("Role:"),
             company_name=text_field("Company name:"),
@@ -37,15 +52,17 @@ def add_job_form():
             work_arrangement=select_field("Work arrangement:", choices=ARRANGEMENT),
             job_posting_url=text_field("Job posting URL:"),
         ).ask()
-        result = Job.model_validate(answers).model_dump()
+        result = Job.model_validate(answers)
         return result
     except ValidationError as e:
-        print()
-        rich.print("[bold red]Validation Error")
+        error_heading = Padding(
+            "Validation error", (1, 0, 0, 0), style=f"bold {Colors.red.value}"
+        )
+        rich.print(error_heading)
         for error in e.errors():
             field = to_pascal_case(error["loc"][0])
             message = error["msg"]
-            rich.print(f"[bold]{field}[/bold] - {message}")
+            rich.print(f"{field} - [{Colors.sky_blue.value}]{message}")
         raise typer.Exit()
 
 

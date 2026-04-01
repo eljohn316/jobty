@@ -19,7 +19,6 @@ def add():
     """
     Add a new job application entry
     """
-
     payload = add_job_form()
     add_job_application(payload)
 
