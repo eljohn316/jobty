@@ -1,6 +1,7 @@
 import sqlite3
 import uuid
 from contextlib import contextmanager
+from datetime import datetime
 from typing import Any
 
 import rich
@@ -34,10 +35,19 @@ def db_create_table():
                 work_arrangement TEXT NOT NULL,
                 status TEXT NOT NULL,
                 job_posting_url TEXT NOT NULL,
+                date_added TEXT,
                 UNIQUE(role, company_name)
-            ); 
+            ) STRICT; 
         """
         curr.execute(query)
+
+
+def db_get_all_jobs():
+    with db_get_connection() as conn:
+        curr = conn.cursor()
+        query = "SELECT id, role, date_added FROM jobs;"
+        rows = curr.execute(query).fetchall()
+        return rows
 
 
 def db_insert_job(data: dict[str, Any]):
@@ -48,12 +58,14 @@ def db_insert_job(data: dict[str, Any]):
 
             insert_query = """
                 INSERT INTO jobs (
-                    id, role, company_name, location, work_arrangement, status, job_posting_url
+                    id, role, company_name, location, work_arrangement, status, job_posting_url, date_added
                 ) VALUES (
-                    :id, :role, :company_name, :location, :work_arrangement, :status, :job_posting_url
+                    :id, :role, :company_name, :location, :work_arrangement, :status, :job_posting_url, :date_added
                 );
             """
-            curr.execute(insert_query, {"id": job_id, **data})
+            curr.execute(
+                insert_query, {"id": job_id, **data, "date_added": datetime.now()}
+            )
             return job_id
     except sqlite3.IntegrityError as e:
         if "UNIQUE constraint failed" in str(e):

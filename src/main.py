@@ -2,7 +2,7 @@ import typer
 
 from db import db_create_table
 from forms import JobForm
-from services import add_job_application
+from services import add_job_application, get_all_job_applications
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -12,7 +12,7 @@ def list():
     """
     List all saved job application entries
     """
-    print("Get all jobs")
+    get_all_job_applications()
 
 
 @app.command()
