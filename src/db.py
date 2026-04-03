@@ -71,3 +71,11 @@ def db_insert_job(data: dict[str, Any]):
         if "UNIQUE constraint failed" in str(e):
             rich.print(f"[{Colors.red.value}]Job already exists")
         raise typer.Exit()
+
+
+def db_get_single_job(job_id: str):
+    with db_get_connection() as conn:
+        curr = conn.cursor()
+        query = "SELECT * FROM jobs WHERE id = ?;"
+        row = curr.execute(query, (job_id,)).fetchone()
+        return row

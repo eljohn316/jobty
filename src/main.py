@@ -2,7 +2,11 @@ import typer
 
 from db import db_create_table
 from forms import JobForm
-from services import add_job_application, get_all_job_applications
+from services import (
+    add_job_application,
+    get_all_job_applications,
+    get_one_job_application,
+)
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -13,6 +17,14 @@ def list():
     List all saved job application entries
     """
     get_all_job_applications()
+
+
+@app.command()
+def list_one(job_id: str):
+    """
+    List a single saved job application if exists
+    """
+    get_one_job_application(job_id)
 
 
 @app.command()
