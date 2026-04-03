@@ -2,7 +2,7 @@ import rich
 from rich.table import Table
 
 from schemas import Job
-from db import db_insert_job, db_get_all_jobs, db_get_single_job
+from db import db_insert_job, db_get_all_jobs, db_get_single_job, db_delete_job
 from constants import Colors
 from utils import format_datetime
 
@@ -10,7 +10,7 @@ from utils import format_datetime
 def add_job_application(job_model: Job):
     payload = job_model.model_dump()
     job_id = db_insert_job(payload)
-    rich.print(f"[{Colors.emerald.value}]Successfully added")
+    rich.print(f"[{Colors.emerald.value}]Job application successfully added")
     rich.print(job_id)
 
 
@@ -20,7 +20,7 @@ def get_all_job_applications():
         rich.print("You have no saved job applications")
         return
 
-    table = Table(box=rich.box.SIMPLE)
+    table = Table(box=rich.box.HORIZONTALS)
 
     table.add_column(f"[{Colors.emerald.value}]ID")
     table.add_column(f"[{Colors.emerald.value}]Role")
@@ -66,3 +66,13 @@ def get_one_job_application(job_id: str):
         f"[bold {Colors.emerald.value}]Date added", format_datetime(date_applied)
     )
     rich.print(table)
+
+
+def delete_job_application(job_id: str):
+    job = db_get_single_job(job_id)
+    if job is None:
+        rich.print("Job application not found")
+        return
+
+    db_delete_job(job_id)
+    rich.print("Job application successfully deleted")

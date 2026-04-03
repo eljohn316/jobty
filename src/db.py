@@ -79,3 +79,10 @@ def db_get_single_job(job_id: str):
         query = "SELECT * FROM jobs WHERE id = ?;"
         row = curr.execute(query, (job_id,)).fetchone()
         return row
+
+
+def db_delete_job(job_id: str):
+    with db_get_connection() as conn:
+        curr = conn.cursor()
+        query = "DELETE FROM jobs WHERE id = ?;"
+        curr.execute(query, (job_id,))

@@ -6,6 +6,7 @@ from services import (
     add_job_application,
     get_all_job_applications,
     get_one_job_application,
+    delete_job_application,
 )
 
 app = typer.Typer(no_args_is_help=True)
@@ -50,7 +51,7 @@ def delete(job_id: str):
     """
     Delete a job application entry
     """
-    print(f"Delete job application entry {job_id}")
+    delete_job_application(job_id)
 
 
 if __name__ == "__main__":
