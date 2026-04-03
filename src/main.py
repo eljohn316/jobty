@@ -1,6 +1,7 @@
 import typer
 
-from forms import add_job_form
+from db import db_create_table
+from forms import JobForm
 from services import add_job_application
 
 app = typer.Typer(no_args_is_help=True)
@@ -11,7 +12,7 @@ def list():
     """
     List all saved job application entries
     """
-    print("Job applications")
+    print("Get all jobs")
 
 
 @app.command()
@@ -19,8 +20,9 @@ def add():
     """
     Add a new job application entry
     """
-    payload = add_job_form()
-    add_job_application(payload)
+    form = JobForm()
+    job = form.ask_and_validate()
+    add_job_application(job)
 
 
 @app.command()
@@ -40,4 +42,5 @@ def delete(job_id: str):
 
 
 if __name__ == "__main__":
+    db_create_table()
     app()
