@@ -1,8 +1,15 @@
+import typer
 import rich
 from rich.table import Table
 
 from schemas import Job
-from db import db_insert_job, db_get_all_jobs, db_get_single_job, db_delete_job
+from db import (
+    db_insert_job,
+    db_get_all_jobs,
+    db_get_single_job,
+    db_delete_job,
+    db_update_job,
+)
 from constants import Colors
 from utils import format_datetime
 
@@ -68,6 +75,12 @@ def get_one_job_application(job_id: str):
     rich.print(table)
 
 
+def update_job_application(job_id, job: Job):
+    payload = job.model_dump()
+    db_update_job(job_id, payload)
+    rich.print(job_id)
+
+
 def delete_job_application(job_id: str):
     job = db_get_single_job(job_id)
     if job is None:
@@ -76,3 +89,31 @@ def delete_job_application(job_id: str):
 
     db_delete_job(job_id)
     rich.print("Job application successfully deleted")
+
+
+def get_job_application_values(job_id: str):
+    job = db_get_single_job(job_id)
+    if job is None:
+        rich.print("Job application not found")
+        raise typer.Exit()
+
+    (
+        job_id,
+        role,
+        company_name,
+        location,
+        work_arrangement,
+        status,
+        job_posting_url,
+        _,
+    ) = job
+
+    return dict(
+        id=job_id,
+        role=role,
+        company_name=company_name,
+        location=location,
+        work_arrangement=work_arrangement,
+        status=status,
+        job_posting_url=job_posting_url,
+    )

@@ -3,9 +3,11 @@ import typer
 from db import db_create_table
 from forms import JobForm
 from services import (
-    add_job_application,
     get_all_job_applications,
     get_one_job_application,
+    get_job_application_values,
+    add_job_application,
+    update_job_application,
     delete_job_application,
 )
 
@@ -43,7 +45,10 @@ def update(job_id: str):
     """
     Update a job application entry
     """
-    print(f"Update job application {job_id}")
+    default_values = get_job_application_values(job_id)
+    form = JobForm(default_values)
+    job = form.ask_and_validate()
+    update_job_application(job_id, job)
 
 
 @app.command()

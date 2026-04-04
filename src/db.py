@@ -81,6 +81,22 @@ def db_get_single_job(job_id: str):
         return row
 
 
+def db_update_job(job_id, data: dict[str, Any]):
+    with db_get_connection() as conn:
+        curr = conn.cursor()
+        query = """
+            UPDATE jobs
+            SET role = :role,
+                company_name = :company_name,
+                location = :location,
+                work_arrangement = :work_arrangement,
+                status = :status,
+                job_posting_url = :job_posting_url
+            WHERE id = :id
+        """
+        curr.execute(query, {**data, "id": job_id})
+
+
 def db_delete_job(job_id: str):
     with db_get_connection() as conn:
         curr = conn.cursor()
