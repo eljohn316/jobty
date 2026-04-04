@@ -7,8 +7,6 @@ from typing import Any
 import rich
 import typer
 
-from constants import Colors
-
 
 @contextmanager
 def db_get_connection():
@@ -69,7 +67,7 @@ def db_insert_job(data: dict[str, Any]):
             return job_id
     except sqlite3.IntegrityError as e:
         if "UNIQUE constraint failed" in str(e):
-            rich.print(f"[{Colors.red.value}]Job already exists")
+            rich.print("Job application already exists")
         raise typer.Exit()
 
 
