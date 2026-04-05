@@ -5,8 +5,8 @@ import questionary
 import rich
 from pydantic import ValidationError
 
-from schemas import Job
-from constants import Arrangement, Colors, Status
+from .schemas import Job
+from .constants import Arrangement, Colors, Status
 
 
 class JobForm:

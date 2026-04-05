@@ -1,11 +1,21 @@
 [project]
-name = "jobty-cli"
+name = "jobty"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
+authors = [
+    { name = "El John", email = "bongaeljohn07@gmail.com" }
+]
 requires-python = ">=3.13"
 dependencies = [
     "pydantic>=2.12.5",
     "questionary>=2.1.1",
     "typer>=0.24.1",
 ]
+
+[project.scripts]
+jobty = "jobty.main:app"
+
+[build-system]
+requires = ["uv_build>=0.9.15,<0.10.0"]
+build-backend = "uv_build"

@@ -1,18 +1,19 @@
 import rich
 import typer
 
-from forms import JobForm
-from services import (
+from .db import db_create_table
+from .forms import JobForm
+from .services import (
     get_all_job_applications,
     get_one_job_application,
     add_job_application,
     update_job_application,
     delete_job_application,
-    init_job_applications_table,
 )
-from print_helpers import print_jobs_table, print_job_table
+from .print_helpers import print_jobs_table, print_job_table
 
 app = typer.Typer(no_args_is_help=True)
+db_create_table()
 
 
 @app.command()
@@ -90,8 +91,3 @@ def delete(job_id: str):
 
     delete_job_application(job_id)
     rich.print(job_id)
-
-
-if __name__ == "__main__":
-    init_job_applications_table()
-    app()

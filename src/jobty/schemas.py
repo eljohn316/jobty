@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_serializer
-from constants import Arrangement, Status
+from .constants import Arrangement, Status
 
 
 class Job(BaseModel):

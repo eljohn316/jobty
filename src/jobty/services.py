@@ -1,5 +1,5 @@
-from schemas import Job
-from db import (
+from .schemas import Job
+from .db import (
     db_insert_job,
     db_get_all_jobs,
     db_get_single_job,

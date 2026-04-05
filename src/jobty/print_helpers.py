@@ -1,8 +1,8 @@
 import rich
 from rich.table import Table
 
-from constants import Colors
-from utils import format_datetime
+from .constants import Colors
+from .utils import format_datetime
 
 
 def print_jobs_table(jobs):
