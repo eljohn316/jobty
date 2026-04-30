@@ -6,6 +6,7 @@ import typer
 from pydantic import ValidationError
 
 from .constants import Arrangement, Colors, Status
+from .print_helpers import print_validation_errors
 from .schemas import JobCreate
 
 styles = {
@@ -23,15 +24,6 @@ styles = {
 }
 
 
-def print_validation_errors(exception: ValidationError):
-    rich.print(f"[{Colors.red.value}]Validation error")
-    for error in exception.errors():
-        field: str = error["loc"][0]
-        field = (" ".join(field.split("_"))).capitalize()
-        message = error["msg"]
-        rich.print(f"{field} - [{Colors.gray.value}]{message}")
-
-
 class Prompt:
     def __init__(self, default_values: dict[str, Any] = {}):
         self.default_values = default_values
@@ -47,7 +39,6 @@ class Prompt:
             validated_model = JobCreate.model_validate(answers)
             return validated_model
         except ValidationError as e:
-            rich.print()
             print_validation_errors(e)
             raise typer.Exit()
 

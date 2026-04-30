@@ -52,9 +52,13 @@ def add():
     prompt = Prompt()
     raw_answers = prompt.ask()
     answers = prompt.validate(raw_answers)
-    create_job(answers)
+    new_job = create_job(answers)
+
     typer.echo()
-    typer.echo("Job application added!")
+    if new_job is None:
+        typer.echo("Job already exists")
+    else:
+        typer.echo("Job application added")
 
 
 @app.command()
@@ -122,7 +126,7 @@ def update(
         typer.echo("Job application not found")
         return
 
-    typer.echo(f"Job #{updated_job_id} updated!")
+    typer.echo(f"Job #{updated_job_id} updated")
 
 
 @app.command()
@@ -136,4 +140,4 @@ def delete(job_id: int):
         return
 
     delete_job(job)
-    typer.echo(f"Job #{job_id} deleted!")
+    typer.echo(f"Job #{job_id} deleted")

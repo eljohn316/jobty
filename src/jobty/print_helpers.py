@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Literal, Sequence, Tuple
 
 import rich
+from pydantic import ValidationError
 from rich.table import Table
 from sqlalchemy import Row
 
@@ -67,3 +68,13 @@ def print_job(job: Job):
         else f"[{Colors.gray.value}]Unset",
     )
     rich.print(table)
+
+
+def print_validation_errors(exception: ValidationError):
+    rich.print()
+    rich.print(f"[{Colors.red.value}]Validation error")
+    for error in exception.errors():
+        field: str = error["loc"][0]
+        field = (" ".join(field.split("_"))).capitalize()
+        message = error["msg"]
+        rich.print(f"{field} - [{Colors.gray.value}]{message}")

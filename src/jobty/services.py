@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from . import models
 from .database import get_db_session
@@ -7,20 +8,23 @@ from .schemas import JobCreate, JobUpdate
 
 def create_job(job: JobCreate):
     with get_db_session() as session:
-        new_job = models.Job(
-            role=job.role,
-            company=job.company,
-            location=job.location,
-            work_arrangement=job.work_arrangement,
-            status=job.status,
-            source_link=job.source_link,
-            interview_date=job.interview_date,
-            interview_time=job.interview_time,
-        )
-        session.add(new_job)
-        session.commit()
-        session.refresh(new_job)
-        return new_job
+        try:
+            new_job = models.Job(
+                role=job.role,
+                company=job.company,
+                location=job.location,
+                work_arrangement=job.work_arrangement,
+                status=job.status,
+                source_link=job.source_link,
+                interview_date=job.interview_date,
+                interview_time=job.interview_time,
+            )
+            session.add(new_job)
+            session.commit()
+            session.refresh(new_job)
+            return new_job
+        except IntegrityError:
+            return None
 
 
 def get_job(job_id: int):
