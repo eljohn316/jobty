@@ -1,4 +1,4 @@
-from datetime import UTC, date, datetime, time
+from datetime import date, datetime, time
 from typing import Literal
 
 from sqlalchemy import Date, DateTime, Integer, String, Time, UniqueConstraint
@@ -17,8 +17,7 @@ class Job(Base):
         autoincrement=True,
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(UTC),
+        DateTime, default=lambda: datetime.now()
     )
     role: Mapped[str] = mapped_column(String, nullable=False)
     company: Mapped[str] = mapped_column(String, nullable=False)

@@ -1,13 +1,13 @@
 from datetime import date, datetime, time
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator
+from pydantic import BaseModel, ConfigDict, field_serializer
 
 from .constants import Arrangement, Status
 
 
 class JobBaseModel(BaseModel):
     model_config = ConfigDict(
-        extra="forbid",
+        extra="ignore",
         str_strip_whitespace=True,
         str_min_length=1,
         validate_default=True,
@@ -20,24 +20,10 @@ class JobBase(JobBaseModel):
     company: str
     location: str
     work_arrangement: Arrangement
-    status: Status = Field(default=Status.applied)
+    status: Status
     source_link: str | None = None
     interview_date: date | None = None
     interview_time: time | None = None
-
-    @field_validator("source_link", "interview_date", "interview_time", mode="before")
-    @classmethod
-    def ensure_none(cls, value: str | None):
-        if isinstance(value, str) and len(value) == 0:
-            return None
-        return value
-
-    @field_validator("interview_time", mode="before")
-    @classmethod
-    def ensure_time(cls, value: str):
-        if isinstance(value, str) and len(value) > 0:
-            return datetime.strptime(value, "%I:%M %p").time()
-        return value
 
     @field_serializer("interview_date", mode="plain")
     def ser_interview_date(self, value: date | None):
@@ -60,6 +46,10 @@ class JobDetails(JobBase):
     id: int
     created_at: datetime
 
+    @field_serializer("created_at", mode="plain")
+    def ser_created_at(self, value: datetime):
+        return value.strftime("%b %-d, %Y - %I:%M %p")
+
 
 class JobUpdate(JobBaseModel):
     role: str | None = None
@@ -70,17 +60,3 @@ class JobUpdate(JobBaseModel):
     source_link: str | None = None
     interview_date: date | None = None
     interview_time: time | None = None
-
-    @field_validator("source_link", "interview_date", "interview_time", mode="before")
-    @classmethod
-    def ensure_none(cls, value: str | None):
-        if isinstance(value, str) and len(value) == 0:
-            return None
-        return value
-
-    @field_validator("interview_time", mode="before")
-    @classmethod
-    def ensure_time(cls, value: str):
-        if isinstance(value, str) and len(value) > 0:
-            return datetime.strptime(value, "%I:%M %p").time()
-        return value

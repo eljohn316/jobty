@@ -7,7 +7,7 @@ from rich.table import Table
 from sqlalchemy import Row
 
 from .constants import Colors
-from .models import Job
+from .schemas import JobDetails
 
 JobRow = Tuple[
     int,
@@ -41,31 +41,32 @@ def print_jobs(
     rich.print(table)
 
 
-def print_job(job: Job):
+def print_job(job_details_model: JobDetails):
+    job = job_details_model.model_dump(exclude_none=True)
 
     table = Table(box=rich.box.SIMPLE, show_header=False)
     table.add_column(style=f"bold {Colors.emerald.value}")
-    table.add_row("ID", str(job.id))
-    table.add_row("Role", job.role)
-    table.add_row("Company", job.company)
-    table.add_row("Location", job.location)
-    table.add_row("Work arrangement", job.work_arrangement)
-    table.add_row("Status", job.status)
+    table.add_row("ID", str(job.get("id")))
+    table.add_row("Role", job.get("role"))
+    table.add_row("Company", job.get("company"))
+    table.add_row("Location", job.get("location"))
+    table.add_row("Work arrangement", job.get("work_arrangement"))
+    table.add_row("Status", job.get("status"))
     table.add_row(
         "Source link",
-        job.source_link if job.source_link else f"[{Colors.gray.value}]Unset",
+        job.get("source_link", f"[{Colors.gray.value}]Unset"),
     )
     table.add_row(
         "Interview date",
-        job.interview_date.strftime("%b %d, %Y")
-        if job.interview_date
-        else f"[{Colors.gray.value}]Unset",
+        job.get("interview_date", f"[{Colors.gray.value}]Unset"),
     )
     table.add_row(
         "Interview time",
-        job.interview_time.strftime("%I:%M %p")
-        if job.interview_time
-        else f"[{Colors.gray.value}]Unset",
+        job.get("interview_time", f"[{Colors.gray.value}]Unset"),
+    )
+    table.add_row(
+        "Added on",
+        job.get("created_at"),
     )
     rich.print(table)
 

@@ -1,3 +1,4 @@
+import typer
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
@@ -24,12 +25,14 @@ def create_job(job: JobCreate):
             session.refresh(new_job)
             return new_job
         except IntegrityError:
-            return None
+            typer.echo("Job already exists")
+            raise typer.Exit()
 
 
 def get_job(job_id: int):
     with get_db_session() as session:
-        job = session.get(models.Job, job_id)
+        query = select(models.Job).where(models.Job.id == job_id)
+        job = session.execute(query).scalars().first()
         return job
 
 
@@ -56,7 +59,8 @@ def update_job(job_id: int, job_update: JobUpdate):
     with get_db_session() as session:
         job = session.get(models.Job, job_id)
         if job is None:
-            return None
+            typer.echo("Job application not found")
+            raise typer.Exit()
 
         job_payload = job_update.model_dump(exclude_none=True)
         for field, value in job_payload.items():

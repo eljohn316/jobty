@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Literal
 
 
 class Colors(Enum):
@@ -8,14 +9,6 @@ class Colors(Enum):
     gray = "#9ca3af"
 
 
-class Status(Enum):
-    applied = "Applied"
-    interview = "Interview"
-    hired = "Hired"
-    rejected = "Rejected"
+Arrangement = Literal["Onsite", "Hybrid", "Remote"]
 
-
-class Arrangement(Enum):
-    onsite = "Onsite"
-    hybrid = "Hybrid"
-    remote = "Remote"
+Status = Literal["Applied", "Interview", "Hired", "Rejected"]
