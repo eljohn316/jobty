@@ -36,7 +36,7 @@ def get_job(job_id: int):
         return job
 
 
-def get_jobs():
+def get_jobs(status: list[str], work_arrangement: list[str]):
     with get_db_session() as session:
         query = select(
             models.Job.id,
@@ -44,7 +44,15 @@ def get_jobs():
             models.Job.role,
             models.Job.company,
             models.Job.status,
-        ).order_by(models.Job.created_at.desc())
+            models.Job.work_arrangement,
+        )
+
+        if status:
+            query = query.where(models.Job.status.in_(status))
+
+        if work_arrangement:
+            query = query.where(models.Job.work_arrangement.in_(work_arrangement))
+
         jobs = session.execute(query).all()
         return jobs
 

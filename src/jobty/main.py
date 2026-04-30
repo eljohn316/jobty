@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 from typing import Annotated
 
 import typer
@@ -16,12 +17,29 @@ Base.metadata.create_all(bind=engine)
 app = typer.Typer(no_args_is_help=True)
 
 
+class FilterStatus(str, Enum):
+    applied = "Applied"
+    interview = "Interview"
+    hired = "Hired"
+    rejected = "Rejected"
+
+
+class WorkArrangement(str, Enum):
+    onsite = "Onsite"
+    hybrid = "Hybrid"
+    remote = "Remote"
+
+
 @app.command()
 def list(
     job_id: Annotated[
         int,
         Argument(help="The ID of the Job to list", metavar="job_id"),
     ] = None,
+    status: Annotated[list[FilterStatus], Option(help="Filter by status")] = [],
+    work_arrangement: Annotated[
+        list[WorkArrangement], Option(help="Filter by work arrangement")
+    ] = [],
 ):
     """List all job application entries or a single job application entry if job id is provided."""
     if job_id:
@@ -32,10 +50,15 @@ def list(
         job_details = JobDetails(**job.__dict__)
         print_job(job_details)
     else:
-        jobs = get_jobs()
+        jobs = get_jobs(
+            status=[s.value for s in status],
+            work_arrangement=[w.value for w in work_arrangement],
+        )
+
         if len(jobs) == 0:
             typer.echo("You have no job applications yet.")
             return
+
         print_jobs(jobs)
 
 
