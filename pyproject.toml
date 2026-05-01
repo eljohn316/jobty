@@ -1,7 +1,7 @@
 [project]
 name = "jobty"
 version = "0.1.0"
-description = "Add your description here"
+description = "A simple CLI for tracking all your job applications."
 readme = "README.md"
 authors = [
     { name = "El John", email = "bongaeljohn07@gmail.com" }
